@@ -5,6 +5,7 @@ import pyautogui
 from path_utils import get_image_path
 from enteties.dungeon import Dungeon
 from enteties.click_coordinates import ClickCoordinate
+from enteties.screenshot_region import ScreenshotRegion
 
 class MenuNavigationService:
     dungoens_page_2 = [ 
@@ -40,16 +41,13 @@ class MenuNavigationService:
             diff = ImageChops.difference(image, new_image)
 
             if not diff.getbbox(): # A match
+                print(f"Found {image_file}")
                 return True
-
+            print(f"Didn't find {image_file}")
         return False
 
-    def to_main_menu(self) -> bool:
-        battle_button = Image.open(f"{get_image_path("Battle-Button.png")}")
-
-        region = {'left': 3556, 'top': 957, 'width': 120, 'height': 28}
-        
-        if(self.screens_match("Battle-Button.png", region)):
+    def to_main_menu(self) -> bool:        
+        if(self.screens_match("Battle-Button.png", ScreenshotRegion.MAIN_MENU_BATTLE_BUTTON.value)):
             print("In main menu")
             return True
 
@@ -61,14 +59,13 @@ class MenuNavigationService:
     
     def clear_ads(self):
         print("Checking for ads")
-        close_ad_button_region = {'left': 3682, 'top': 58, 'width': 36, 'height': 35}
 
         attempts = 0
 
         while True:
             time.sleep(3)
 
-            if (self.screens_match("Close-Ad-Button.png", close_ad_button_region)):
+            if (self.screens_match("Close-Ad-Button.png", ScreenshotRegion.CLOSE_AD_BUTTON.value)):
                 print("Closing ad")
                 self.click(*ClickCoordinate.CLOSE_AD_BUTTON.value)
                 pyautogui.moveTo(3800,80)
@@ -107,15 +104,13 @@ class MenuNavigationService:
             pyautogui.mouseUp()
     
     def start_battle(self):
-        replay_button_region = {'left': 2840, 'top': 902, 'width': 297, 'height': 53}
-
         for i in range(self.rematches):
             if(i == 0):
                 self.click(*ClickCoordinate.START_BATTLE_BUTTON.value)
                 pyautogui.moveTo(1996,40)
                 time.sleep(2)
             else:
-                while not self.screens_match("Replay-Button.png", replay_button_region):
+                while not self.screens_match("Replay-Button.png", ScreenshotRegion.REPLAY_BUTTON.value):
                     print("Waiting for game to finish...")
                     time.sleep(5)
 
@@ -123,6 +118,31 @@ class MenuNavigationService:
                 pyautogui.moveTo(1996,40)
             print(f"Starting game: {i+1}/{self.rematches}")
         print("Runs are finishing")
+    
+    # Daily Quests
 
+    def summon_champion(self, shard_type:str, amount:int, ten_times:bool):
+        click_coords = None
+        match shard_type:
+            case "Mystery":
+                click_coords = ClickCoordinate.MYSTERY_SHARD_TAB.value
+            case "Ancient":
+                click_coords = ClickCoordinate.ANCIENT_SHARD_TAB.value
+            case "Void":
+                click_coords = ClickCoordinate.VOID_SHARD_TAB.value
+            case "Primal":
+                click_coords = ClickCoordinate.PRIMAL_SHARD_TAB.value
+            case "Sacred":
+                click_coords = ClickCoordinate.SACRED_SHARD_TAB.value
 
-        return
+        self.click(*click_coords)
+                
+        if(ten_times):
+            click_coords = ClickCoordinate.SUMMON_TEN.value
+        else:
+            click_coords = ClickCoordinate.SUMMON_ONE.value
+            
+        for i in range(amount):
+            self.click(*click_coords)
+            time.sleep(9)
+        

@@ -4,6 +4,9 @@ class ClickCoordinate(Enum):
     # Main Menu
     MAIN_MENU_BATTLE_BUTTON = (3555, 969)
     CLOSE_AD_BUTTON = (3678, 54)
+    QUESTS_BUTTON = (2436,964)
+    DAILY_QUESTS_TAB_BUTTON = (2100, 188)
+    DAILY_QUEST_BUTTON = (3600, 400)
 
     # Dungeons
     DUNGEON_BUTTON = (2525, 445)
@@ -16,3 +19,12 @@ class ClickCoordinate(Enum):
     # Globals
     START_BATTLE_BUTTON = (3600, 944)
     REPLAY_BATTLE_BUTTON = (3000, 960)
+
+    # Summon
+    MYSTERY_SHARD_TAB = (2200, 200)
+    ANCIENT_SHARD_TAB = (2200, 400)
+    VOID_SHARD_TAB = (2200, 600)
+    PRIMAL_SHARD_TAB = (2200, 800)
+    SACRED_SHARD_TAB = (2200, 950)
+    SUMMON_ONE = (2850, 950)
+    SUMMON_TEN = (3050, 950)
