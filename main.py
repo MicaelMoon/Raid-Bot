@@ -3,7 +3,7 @@ from Services.menu_navigation_service import MenuNavigationService
 from PIL import Image, ImageChops
 from enteties.dungeon import Dungeon
 from enteties.game_mode import GameMode
-from enteties.coordinates import Coordinates
+from enteties.click_coordinates import ClickCoordinate
 
 menu_service = MenuNavigationService()
 
@@ -14,22 +14,23 @@ parser.add_argument("-r", type=int, required=True, help="enter the number of rem
 args = parser.parse_args()
 
 game_mode = args.gm
-dungeon = args.d
+dungeon_args = args.d
 menu_service.rematches = args.r
 
 def start():
 
     menu_service.to_main_menu()
-    menu_service.click(Coordinates.MAIN_MENU_BATTLE_BUTTON.value[0], Coordinates.MAIN_MENU_BATTLE_BUTTON.value[1])
+    menu_service.click(*ClickCoordinate.MAIN_MENU_BATTLE_BUTTON.value)
 
     match game_mode:
         case GameMode.DUNGEONS.value:
-            menu_service.click(2525, 445)
+            menu_service.click(*ClickCoordinate.DUNGEON_BUTTON.value)
 
-            if(dungeon == None):
-                print("You didn't enter a dungeon...")
-            print("Entering dungeons")
-            menu_service.select_dungeon(dungeon)
+            if any(dungeon_args == dungeon.value for dungeon in Dungeon):
+                print(f"Entering [{dungeon_args}]")
+                menu_service.select_dungeon(dungeon_args)
+            else:
+                print("Invalid Dungeon")
 
 
 start()

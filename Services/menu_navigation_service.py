@@ -4,9 +4,10 @@ from PIL import Image, ImageChops
 import pyautogui
 from path_utils import get_image_path
 from enteties.dungeon import Dungeon
+from enteties.click_coordinates import ClickCoordinate
 
 class MenuNavigationService:
-    dungoens_page_2 = [
+    dungoens_page_2 = [ 
         "ice",
         "spider",
         "dragon",
@@ -16,10 +17,10 @@ class MenuNavigationService:
     ]
 
     dungeons_cordinates = {
-        Dungeon.IRON_TWINS_FORTRESS.value: (2525, 445),
-        Dungeon.ICE_GOLEMS_PEEK.value: (1980, 280),
-        Dungeon.SPIDERS_DEN.value: (2040, 500),
-        Dungeon.DRAGONS_LAYER.value: (2500, 300)
+        Dungeon.IRON_TWINS_FORTRESS.value: (ClickCoordinate.IRON_TWINS_FORTRESS.value[0], ClickCoordinate.IRON_TWINS_FORTRESS.value[1]),
+        Dungeon.ICE_GOLEMS_PEEK.value: (ClickCoordinate.ICE_GOLEMS_PEEK.value[0], ClickCoordinate.ICE_GOLEMS_PEEK.value[1]),
+        Dungeon.SPIDERS_DEN.value: (ClickCoordinate.SPIDERS_DEN.value[0], ClickCoordinate.SPIDERS_DEN.value[1]),
+        Dungeon.DRAGONS_LAYER.value: (ClickCoordinate.DRAGONS_LAYER.value[0], ClickCoordinate.DRAGONS_LAYER.value[1])
     }
 
     rematches = 1
@@ -69,7 +70,7 @@ class MenuNavigationService:
 
             if (self.screens_match("Close-Ad-Button.png", close_ad_button_region)):
                 print("Closing ad")
-                self.click(3678, 54)
+                self.click(*ClickCoordinate.CLOSE_AD_BUTTON.value)
                 pyautogui.moveTo(3800,80)
             else:
                 print("No ads detected")
@@ -92,18 +93,17 @@ class MenuNavigationService:
 
         coords = self.dungeons_cordinates.get(dungeon)
         self.click(coords[0], coords[1]) # Click Dungeon
-        self.click(3600, 1000) # Click Stage
+        self.click(*ClickCoordinate.LATEST_STAGE_BUTTON.value) # Click Stage
 
         self.start_battle()
 
 
     def scroll_page(self, start:int, finish:int, horizontal:bool):
         if(horizontal):
-            print("horizontal scroll")
             pyautogui.moveTo(start,800)
 
             pyautogui.mouseDown()
-            pyautogui.moveTo(finish,800, 1)
+            pyautogui.moveTo(finish, 800, 1)
             pyautogui.mouseUp()
     
     def start_battle(self):
@@ -111,15 +111,15 @@ class MenuNavigationService:
 
         for i in range(self.rematches):
             if(i == 0):
-                self.click(3600, 944)
+                self.click(*ClickCoordinate.START_BATTLE_BUTTON.value)
                 pyautogui.moveTo(1996,40)
                 time.sleep(2)
             else:
                 while not self.screens_match("Replay-Button.png", replay_button_region):
+                    print("Waiting for game to finish...")
                     time.sleep(5)
-                    print("No Replay Button found")
 
-                self.click(3000, 960)
+                self.click(*ClickCoordinate.REPLAY_BATTLE_BUTTON.value)
                 pyautogui.moveTo(1996,40)
             print(f"Starting game: {i+1}/{self.rematches}")
         print("Runs are finishing")
